@@ -1,7 +1,7 @@
 export default function CategCard({info, handleSubCateg}){
     return(
         <div className="w-[calc(25%-20px)] max-h-[130px] bg-[#2b2b2b] border-none rounded-xl overflow-hidden 
-        grid grid-cols-[2fr_12fr] relative 
+        grid grid-cols-[2fr_12fr] relative cursor-pointer
         shadow-md shadow-black/50 hover:shadow-black/50 hover:shadow-lg hover:scale-105
         transition-all duration-500 z-10"
         onClick={()=> handleSubCateg(info.cname)}

@@ -77,7 +77,7 @@ export default function SkelitonCard({ items }) {
               <p className="flex-1 truncate">{itm.ItemName}</p>
               <div className="flex-1 w-1/2 flex items-center">
                 <PhilippinePeso className="h-[0.75rem] w-[0.75rem]" />
-                <p>{itm.price}</p>
+                <p>{itm.Price}-{index}</p>
               </div>
 
               <div className="flex justify-end gap-4 items-center"

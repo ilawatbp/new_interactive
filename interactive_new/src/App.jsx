@@ -31,7 +31,7 @@ function App() {
     // Start loading
     setView('loading'); 
 
-
+    console.log(queryValue)
     // Fetch from backend
     fetch(`http://localhost:5000/items?q=${queryValue}`)
       .then((res) => res.json())
@@ -48,6 +48,27 @@ function App() {
         setView('category'); 
       });
   }, [queryValue]);
+
+  const handleSubCategoryClick = (id) =>{
+    // http://localhost:5000/items?group=3
+    setView('loading'); 
+    
+    // Fetch from backend
+    fetch(`http://localhost:5000/items?group=${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setItems(data);
+
+        // simulate short loading delay (optional)
+        setTimeout(() => {
+           setView('searchQuery'); 
+        }, 1000); // 1 sec loading animation
+      })
+      .catch((err) => {
+        console.error("Error fetching:", err);
+        setView('category'); 
+      });
+  }
 
   //to open subcategories
   function handleSubCateg(categ){
@@ -129,7 +150,7 @@ function App() {
               .filter((value) => value.cname == subCatVal)
               .map((categ) =>
                 categ.subcategories.map((sub, index) => (
-                  <SubCateg info={sub} key={index}></SubCateg>
+                  <SubCateg info={sub} key={index} handleSubCategoryClick={handleSubCategoryClick}></SubCateg>
                 ))
               )}
           </div>
@@ -177,55 +198,3 @@ function App() {
 }
 
 export default App;
-
-
-
-//   useEffect(() => {
-//   if (!queryValue) return;
-
-//   setView("loading");
-
-//   // Simulate backend delay (e.g., 1 sec)
-//   setTimeout(() => {
-// const dummyData = [
-//   { ItemCode: "00013633", ItemName: "Crystal Chandelier", price: 4890 },
-//   { ItemCode: "00013639", ItemName: "Wall Sconce Lamp", price: 1250 },
-//   { ItemCode: "00013646", ItemName: "Vintage Pendant Light", price: 2150 },
-//   { ItemCode: "00013650", ItemName: "Glass Ceiling Light", price: 1890 },
-//   { ItemCode: "00013651", ItemName: "Gold Frame Chandelier", price: 5600 },
-//   { ItemCode: "00013652", ItemName: "Modern Pendant Tube Light", price: 2400 },
-//   { ItemCode: "00013653", ItemName: "Luxury Hanging Light", price: 3100 },
-//   { ItemCode: "00013654", ItemName: "LED Wall Mounted Light", price: 980 },
-//   { ItemCode: "00013655", ItemName: "Art Deco Chandelier", price: 4300 },
-//   { ItemCode: "00013656", ItemName: "Glass Ball Pendant", price: 1750 },
-//   { ItemCode: "00013657", ItemName: "Industrial Ceiling Lamp", price: 2600 },
-//   { ItemCode: "00013658", ItemName: "Minimalist Ceiling Light", price: 1490 },
-//   { ItemCode: "00013659", ItemName: "Recessed Downlight", price: 650 },
-//   { ItemCode: "00013660", ItemName: "Round LED Panel Light", price: 720 },
-//   { ItemCode: "00013661", ItemName: "Smart RGB Ceiling Light", price: 1950 },
-//   { ItemCode: "00013672", ItemName: "Dining Table Pendant", price: 3350 },
-//   { ItemCode: "00013673", ItemName: "Cylindrical Wall Lamp", price: 1150 },
-//   { ItemCode: "00013674", ItemName: "Glass Tube Ceiling Light", price: 1680 },
-//   { ItemCode: "00013676", ItemName: "Outdoor Floodlight", price: 2450 },
-//   { ItemCode: "00013680", ItemName: "Track Lighting Kit", price: 2120 },
-//   { ItemCode: "00013681", ItemName: "Ceiling Spot Light", price: 950 },
-//   { ItemCode: "00013682", ItemName: "Table Lamp with Shade", price: 870 },
-//   { ItemCode: "00013683", ItemName: "LED Ring Light Fixture", price: 2890 },
-//   { ItemCode: "00013684", ItemName: "Brass Pendant Light", price: 2550 },
-//   { ItemCode: "00013685", ItemName: "Smart Ceiling Lamp", price: 1990 },
-//   { ItemCode: "00013686", ItemName: "Luxury Crystal Pendant", price: 5100 },
-//   { ItemCode: "00013687", ItemName: "Modern Linear Pendant", price: 2750 },
-//   { ItemCode: "00013688", ItemName: "Ceiling Mount Spotlight", price: 1150 },
-// ];
-
-
-//     // Filter dummy data to simulate search
-//     const filtered = dummyData.filter((item) =>
-//       item.ItemName.toLowerCase().includes(queryValue.toLowerCase())
-//     );
-
-//     setItems(filtered);
-//     setView("searchQuery");
-//   }, 1000);
-// }, [queryValue]);
-

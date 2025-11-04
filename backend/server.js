@@ -19,71 +19,49 @@ const dbConfig = {
   },
 };
 
-// ✅ Route: Get items (with optional search filter)
+// ✅ Route: Get items (with optional search + ActiveQryGroup filter)
 app.get("/items", async (req, res) => {
   try {
     const pool = await sql.connect(dbConfig);
     const request = pool.request();
 
-    // 🧠 Get search query from URL (example: /items?q=bulb)
+    // 🧠 Get query parameters from URL (example: /items?q=bulb&group=2)
     const searchQuery = req.query.q || "";
+    const activeGroup = req.query.group || ""; // can be passed in URL
 
-    // ✅ Use parameterized query to prevent SQL injection
+    // ✅ Use parameterized queries to prevent SQL injection
     request.input("search", sql.VarChar, `%${searchQuery}%`);
+    if (activeGroup) request.input("group", sql.VarChar, activeGroup);
 
     const query = `
-    SELECT 
-      ItemCode
-      ,ItemName
-      ,FrgnName
-      ,ItmsGrpCod
-      ,U_ITEM_CLASSIFICATION
-      ,U_INTERACTIVE
-      ,Price
-      ,PriceList
-      ,ActiveQryGroup
-  FROM OITM_WPRICE_WithQryGroup
-        WHERE
+      SELECT 
+        ItemCode,
+        ItemName,
+        ItmsGrpCod,
+        U_ITEM_CLASSIFICATION,
+        U_INTERACTIVE,
+        Price,
+        PriceList,
+        ActiveQryGroup
+      FROM OITM_WPRICE_WithQryGroup
+      WHERE
         U_ITEM_CLASSIFICATION != 1 
         AND U_INTERACTIVE IN (1, 2, '') 
         AND PriceList = 2
         ${
+          activeGroup
+            ? `AND ActiveQryGroup = @group`
+            : ""
+        }
+        ${
           searchQuery
             ? `AND (
-                a.ItemName LIKE @search
-                OR a.ItemCode LIKE @search
-                OR a.FrgnName LIKE @search
+                ItemName LIKE @search
+                OR ItemCode LIKE @search
               )`
             : ""
         }
     `;
-
-
-    // const query = `
-    //   SELECT 
-    //     a.ItemCode,
-    //     a.ItemName,
-    //     a.FrgnName,
-    //     a.ItmsGrpCod,
-    //     a.U_ITEM_CLASSIFICATION,
-    //     a.U_INTERACTIVE,
-    //     b.price
-    //   FROM OITM a 
-    //   LEFT JOIN ITM1 b ON a.ItemCode = b.ItemCode
-    //   WHERE 
-    //     U_ITEM_CLASSIFICATION != 1 
-    //     AND U_INTERACTIVE IN (1, 2, '') 
-    //     AND PriceList = 2
-    //     ${
-    //       searchQuery
-    //         ? `AND (
-    //             a.ItemName LIKE @search
-    //             OR a.ItemCode LIKE @search
-    //             OR a.FrgnName LIKE @search
-    //           )`
-    //         : ""
-    //     }
-    // `;
 
     const result = await request.query(query);
     res.json(result.recordset);

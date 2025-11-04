@@ -1,11 +1,11 @@
-export default function SubCateg({ info }) {
+export default function SubCateg({ info, handleSubCategoryClick }) {
   return (
     <div
       className="w-[calc(25%-20px)] h-[130px] bg-[#2b2b2b] border-none rounded-xl overflow-hidden 
-        grid grid-cols-[8fr_1fr] relative 
+        grid grid-cols-[8fr_1fr] relative cursor-pointer
         shadow-md shadow-black/50 hover:shadow-black/50 hover:shadow-lg hover:scale-105
         transition-all duration-500 z-10"
-      
+      onClick={()=>handleSubCategoryClick(info.id)}
     >
       <div className="bg-[#2f963c] text-white text-2xl pl-7 pr-8 capitalize flex items-center">
         {info.name}
