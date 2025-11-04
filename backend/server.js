@@ -1,0 +1,100 @@
+import express from "express";
+import sql from "mssql";
+import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const dbConfig = {
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  server: process.env.DB_SERVER,
+  database: process.env.DB_DATABASE,
+  options: {
+    encrypt: false,
+    trustServerCertificate: true,
+  },
+};
+
+// ✅ Route: Get items (with optional search filter)
+app.get("/items", async (req, res) => {
+  try {
+    const pool = await sql.connect(dbConfig);
+    const request = pool.request();
+
+    // 🧠 Get search query from URL (example: /items?q=bulb)
+    const searchQuery = req.query.q || "";
+
+    // ✅ Use parameterized query to prevent SQL injection
+    request.input("search", sql.VarChar, `%${searchQuery}%`);
+
+    const query = `
+    SELECT 
+      ItemCode
+      ,ItemName
+      ,FrgnName
+      ,ItmsGrpCod
+      ,U_ITEM_CLASSIFICATION
+      ,U_INTERACTIVE
+      ,Price
+      ,PriceList
+      ,ActiveQryGroup
+  FROM OITM_WPRICE_WithQryGroup
+        WHERE
+        U_ITEM_CLASSIFICATION != 1 
+        AND U_INTERACTIVE IN (1, 2, '') 
+        AND PriceList = 2
+        ${
+          searchQuery
+            ? `AND (
+                a.ItemName LIKE @search
+                OR a.ItemCode LIKE @search
+                OR a.FrgnName LIKE @search
+              )`
+            : ""
+        }
+    `;
+
+
+    // const query = `
+    //   SELECT 
+    //     a.ItemCode,
+    //     a.ItemName,
+    //     a.FrgnName,
+    //     a.ItmsGrpCod,
+    //     a.U_ITEM_CLASSIFICATION,
+    //     a.U_INTERACTIVE,
+    //     b.price
+    //   FROM OITM a 
+    //   LEFT JOIN ITM1 b ON a.ItemCode = b.ItemCode
+    //   WHERE 
+    //     U_ITEM_CLASSIFICATION != 1 
+    //     AND U_INTERACTIVE IN (1, 2, '') 
+    //     AND PriceList = 2
+    //     ${
+    //       searchQuery
+    //         ? `AND (
+    //             a.ItemName LIKE @search
+    //             OR a.ItemCode LIKE @search
+    //             OR a.FrgnName LIKE @search
+    //           )`
+    //         : ""
+    //     }
+    // `;
+
+    const result = await request.query(query);
+    res.json(result.recordset);
+  } catch (err) {
+    console.error("Database error:", err);
+    res.status(500).json({
+      message: "Database connection error",
+      error: err.message,
+    });
+  }
+});
+
+const PORT = 5000;
+app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
