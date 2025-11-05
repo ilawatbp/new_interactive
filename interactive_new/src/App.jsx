@@ -3,18 +3,16 @@ import CategCard from "./components/CategCard";
 import SkelitonCard from "./components/SkelitonCard";
 import ItemCard from "./components/ItemCard";
 import SubCateg from "./components/SubCateg";
+
 import { ShoppingBasket } from "lucide-react";
 import { useState, useEffect } from "react";
 import logo from "./assets/logo.png";
 import categories from "./data/categories";
 
 function App() {
-
-
-
-  const [items, setItems] = useState([]); 
-  const [view, setView] = useState("category")
-  const [subCatVal, setSubCatVal] = useState([])
+  const [items, setItems] = useState([]);
+  const [view, setView] = useState("category");
+  const [subCatVal, setSubCatVal] = useState([]);
   // posible views
   //   - category
   //   - subcategories
@@ -23,58 +21,51 @@ function App() {
   //   - searching
 
   const [queryValue, setQueryValue] = useState("");
+  const [cartValue, setCartValue] = useState([]);
 
-// original 
+  // QUERY TO BACK END WHEN SEARCHING
   useEffect(() => {
     if (!queryValue) return;
-
-    // Start loading
-    setView('loading'); 
-
-    console.log(queryValue)
-    // Fetch from backend
-    fetch(`http://localhost:5000/items?q=${queryValue}`)
+    setView("loading");
+    fetch(`http://localhost:5000/items?q=${queryValue}`) // Fetch from backend
       .then((res) => res.json())
       .then((data) => {
         setItems(data);
 
-        // simulate short loading delay (optional)
         setTimeout(() => {
-           setView('searchQuery'); 
-        }, 1000); // 1 sec loading animation
+          setView("searchQuery");
+        }, 1000);
       })
       .catch((err) => {
         console.error("Error fetching:", err);
-        setView('category'); 
+        setView("category");
       });
   }, [queryValue]);
 
-  const handleSubCategoryClick = (id) =>{
-    // http://localhost:5000/items?group=3
-    setView('loading'); 
-    
-    // Fetch from backend
-    fetch(`http://localhost:5000/items?group=${id}`)
+  // QUERY TO BACKEND WHEN CHOOSING CATEGORY
+  const handleSubCategoryClick = (id) => {
+    setView("loading");
+
+    fetch(`http://localhost:5000/items?group=${id}`) // Fetch from backend
       .then((res) => res.json())
       .then((data) => {
         setItems(data);
 
-        // simulate short loading delay (optional)
         setTimeout(() => {
-           setView('searchQuery'); 
-        }, 1000); // 1 sec loading animation
+          setView("searchQuery");
+        }, 1000);
       })
+
       .catch((err) => {
         console.error("Error fetching:", err);
-        setView('category'); 
+        setView("category");
       });
-  }
+  };
 
   //to open subcategories
-  function handleSubCateg(categ){
+  function handleSubCateg(categ) {
     setSubCatVal(categ);
-    // setSubCatVal(categ);
-    setView("subcategories")
+    setView("subcategories");
   }
 
   function clickFunction() {
@@ -96,10 +87,12 @@ function App() {
             }}
           />
         </div>
-        <div onClick={clickFunction}>
+        <div className="relative" onClick={clickFunction}>
           <ShoppingBasket className="w-8 h-8" />
+          <div className="absolute top-[-4px] right-[-8px] bg-red-300/90 h-4 w-4 rounded-full overflow-hidden text-xs flex justify-center items-center">{cartValue.length}</div>
         </div>
       </div>
+
       {/* MAINBODY */}
       <div className="m-auto w-full">
         <div
@@ -150,7 +143,11 @@ function App() {
               .filter((value) => value.cname == subCatVal)
               .map((categ) =>
                 categ.subcategories.map((sub, index) => (
-                  <SubCateg info={sub} key={index} handleSubCategoryClick={handleSubCategoryClick}></SubCateg>
+                  <SubCateg
+                    info={sub}
+                    key={index}
+                    handleSubCategoryClick={handleSubCategoryClick}
+                  ></SubCateg>
                 ))
               )}
           </div>
@@ -175,7 +172,7 @@ function App() {
             view == "searchQuery" ? "opacity-1" : "opacity-0 h-0"
           }`}
         >
-          <ItemCard items={items} />
+          <ItemCard items={items} setCartValue={setCartValue}/>
         </div>
 
         {view === "searchQuery" && items.length === 0 && (

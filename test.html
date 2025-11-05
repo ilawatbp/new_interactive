@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Interactive Cart</title>
+
+<style>
+/* ====== START OF cart_style.css ====== */
+body { background-color: #f4f4f4; padding-bottom: 200px; }
+p { font-size: 12px; }
+
+header { margin: 15px 0; display: flex; flex-direction: row; }
+header .headImgDiv { flex: 1; }
+header img { width: 200px; }
+.storeDetails { background-color: white; width: 300px; }
+
+.container input {
+  font-size: 12px; margin: 0;
+  background-color: #EAEAEA;
+  border: none; border-bottom: 1px solid white; width: 90%;
+}
+input:focus { border: none; outline: none; border-bottom: 1px solid white; }
+.container input:disabled { background-color: inherit; }
+
+/* NAVBAR */
+.cart-navbar {
+  height: 80px; display: flex; flex-direction: row;
+  margin-bottom: 50px; background-color: #3b4044;
+  box-shadow: 1px 1px 15px #00000030;
+}
+.imgdiv { height: 100%; width: 50px; display: flex; align-items: center; }
+.imgdiv img { max-width: 30px; }
+.divfirst, .divsec {
+  height: 100%; width: 100%; flex: 1; display: flex;
+  flex-direction: row; align-items: center;
+}
+.divsec { justify-content: right; padding-right: 15px; }
+
+.dAll, .btnCart {
+  margin-left: 5px; background-color: inherit; color: #fff;
+  border: 1px solid #3bb44b; padding: 7px 20px; border-radius: 20px;
+  font-size: 16px;
+}
+.dAll:hover, .btnCart:hover {
+  border: 1px solid #3bb44b; background-color: #3bb44b;
+  text-decoration: none; color: #fff;
+}
+.dAll:focus, .btnCart:focus {
+  border: 1px solid #3bb44b; background-color: #3bb44b; color: #fff;
+}
+.dAll:active, .btnCart:focus {
+  box-shadow: inset -1px -1px 1px 1px #00000050; color: #ebebeb; border: none;
+}
+
+/* MAIN CONTAINER */
+.container { width: 8.5in; background-color: #fff; padding: 2px; }
+.header_img img { width: 100%; }
+
+.qouteDetails, .greetings, .item_table, .terms, .letter_head,
+.letter_body_top, .letter_body, .letter-sign, header {
+  padding: 5px 40px; font-size: 12px;
+}
+
+.qouteDetails {
+  display: grid; grid-template-columns: 2fr 1fr;
+  margin-bottom: 12px;
+}
+.qouteDetails_table { font-size: 12px; width: 100%; }
+.qouteDetails_table td:first-child { width: 20%; font-weight: bold; }
+.qouteDetails_table2 td:first-child { width: 50%; }
+
+hr { border: 1px solid black; width: 92%; }
+.greetings p { font-size: 12px; }
+
+/* ITEM TABLE */
+.item_table th { font-size:10px; text-align:center; border-top:1px solid black; border-bottom:1px solid black; }
+.item_table p { font-size: 12px; }
+.item_table tr td { padding:5px 0; vertical-align: top; border-bottom:1px solid grey; }
+.item_table tr:last-child { border-bottom:none; }
+.item_table td:nth-child(1){width:25%;}
+.item_table td:nth-child(2){width:10%;text-align:center;}
+.item_table td:nth-child(3){width:31%;}
+.item_table td:nth-child(4){width:10%;text-align:right;}
+.item_table td:nth-child(5){width:10%;text-align:center;}
+.item_table td:nth-child(6){width:10%;text-align:center;}
+.item_table img{width:auto;max-height:135px;}
+input.priceClass{border-bottom:none;text-align:center;}
+.column_images{position:absolute;bottom:10px;right:10px;z-index:999;}
+.column_images img{width:15px;margin-left:5px;}
+.descriptions div:nth-child(2){height:60px;width:410px;position:absolute;bottom:0;}
+.item_table input[type="number"]::-webkit-inner-spin-button,
+.item_table input[type="number"]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+.item_column{position:relative;}
+
+/* TERMS */
+.termsTable { width: 100%; }
+.termsTable td:nth-child(1){width:1%;}
+.termsTable td:nth-child(2){width:16%;font-weight:bold;}
+.termsTable td:nth-child(3){width:83%;}
+.termsTable td p{display:inline-block;margin:0;}
+.termsTable td input {
+  font-size: 12px; background-color: #EAEAEA;
+  border: none; border-bottom: 1px solid white; width: 90%;
+}
+.termsTable td input:focus{border:none;outline:none;border-bottom:1px solid white;}
+
+/* LETTERS */
+.letter_body_top table { width:20%; margin:10px 0; }
+.letter_body_top table tr td input{text-transform:capitalize;border-bottom:none;}
+.letter_body input{border:none;border-bottom:1px solid black;width:25%;}
+.letter_body input:focus{outline:none;}
+.letter-sign {
+  margin-top:50px; display:grid; grid-template-columns:1fr 1fr;
+}
+.letter-sign div { width:90%; }
+.letter-sign div input {
+  width:100%; border:none; border-bottom:1px solid white;
+}
+.letter-sign div input:focus { outline:none; }
+
+/* BANK DETAILS */
+.bankDetails { display:grid; grid-template-columns:1fr 1fr; }
+.bankDetails table{margin:10px 0;width:100%;}
+.bankDetails td:nth-child(1){width:35%;font-weight:bold;}
+.bankDetails td:nth-child(2){width:65%;}
+
+/* DISCOUNT TOGGLE */
+.discount_hide { display:none; }
+.discount-box2 {
+  position:relative; outline:1px solid #3bb44b; width:180px;
+  max-height:50px; padding:8px 20px; border-radius:40px;
+  margin:0 5px; display:flex; justify-content:left;
+}
+.label p { margin:0; font-weight:normal; font-size:16px; color:#fff; }
+.switch {
+  margin-top:5px; position:absolute; outline:1px solid #fff;
+  right:7px; top:2px; width:52px; height:25px; border-radius:13px;
+}
+.switch input { opacity:0; width:0; height:0; }
+.slider {
+  position:absolute; cursor:pointer; top:0; left:0; right:0; bottom:0;
+  background-color:inherit; transition:.4s;
+}
+.slider:before {
+  position:absolute; content:""; height:18px; width:18px; left:4px; bottom:4px;
+  background-color:#38ab4a; transition:.4s;
+}
+input:checked + .slider { background-color:#38ab4a; }
+input:focus + .slider { box-shadow:0 0 1px #38ab4a; }
+input:checked + .slider:before {
+  transform:translateX(26px); background-color:white;
+}
+.slider.round{border-radius:34px;}
+.slider.round:before{border-radius:50%;}
+/* ====== END OF cart_style.css ====== */
+</style>
+</head>
+
+<body>
+  <!-- Navbar -->
+  <div class="cart-navbar">
+    <div class="imgdiv"></div>
+    <div class="divfirst">
+      <a href="#" class="btnCart">Home</a>
+      <a href="#" class="btnCart">Discount All</a>
+      <div class="discount-box2">
+        <div class="label"><p>Discount</p></div>
+        <label class="switch" for="toggleSwitch">
+          <input type="checkbox" id="toggleSwitch" />
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </div>
+    <div class="divsec">
+      <a href="#" class="btnCart">Service Form</a>
+      <a href="#" class="btnCart">Quotation History</a>
+      <a href="#" class="btnCart">Save</a>
+      <a href="#" class="btnCart">Clear All</a>
+    </div>
+  </div>
+
+  <!-- Page Container -->
+  <div class="container">
+    <header>
+      <div class="headImgDiv"><img src="item/images/logo.png" alt="Logo"></div>
+      <div class="storeDetails">
+        <p style="font-size:16px;margin:0;color:#41b651;"><strong>Ilaw atbp Trading</strong></p>
+        <p>123 Main Street, Makati</p>
+        <p>Tel No: (02) 8123-4567</p>
+        <p>Email: info@ilawatbp.com</p>
+        <p>Website: www.ilawatbp.com</p>
+      </div>
+    </header>
+    <hr style="border:1px solid #41b651;" />
+
+    <div class="qouteDetails">
+      <div>
+        <table class="qouteDetails_table">
+          <tr><td>ATTENTION</td><td><input type="text"></td></tr>
+          <tr><td>DESIGNATION</td><td><input type="text"></td></tr>
+          <tr><td>COMPANY</td><td><input type="text"></td></tr>
+          <tr><td>LOCATION</td><td><input type="text"></td></tr>
+          <tr><td>PROJECT</td><td><input type="text"></td></tr>
+        </table>
+      </div>
+      <div>
+        <table class="qouteDetails_table2 qouteDetails_table">
+          <tr><td>DATE</td><td>11/05/2025</td></tr>
+          <tr><td>QUOTATION NO.</td><td>#000123</td></tr>
+          <tr><td>VALID UNTIL</td><td><input type="date"></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="item_table">
+      <table>
+        <tr>
+          <th>Picture</th>
+          <th>Quantity</th>
+          <th>Description</th>
+          <th>SRP (Php)</th>
+          <th>Total Amount</th>
+        </tr>
+        <tr>
+          <td><img src="item/images/itemImage/sample.webp" /></td>
+          <td>2</td>
+          <td><p>LED Bulb 9W</p><p>Area: Showroom</p></td>
+          <td>158.00</td>
+          <td>316.00</td>
+        </tr>
+        <tr>
+          <td colspan="4">Total Amount (Php)</td>
+          <td><input type="text" class="priceClass" value="316.00" disabled></td>
+        </tr>
+        <tr>
+          <td colspan="4">Delivery Charges</td>
+          <td><input type="number" value="0"></td>
+        </tr>
+        <tr>
+          <td colspan="4">Installation Charges</td>
+          <td><input type="number" value="0"></td>
+        </tr>
+        <tr>
+          <td colspan="4"><strong>Grand Total</strong></td>
+          <td><strong>316.00</strong></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="terms">
+      <p><u>Terms and Conditions</u></p>
+      <table class="termsTable">
+        <tr><td>1.</td><td>Payment:</td><td>50% down payment required upon order confirmation.</td></tr>
+        <tr><td>2.</td><td>Price Change:</td><td>Prices may change without prior notice.</td></tr>
+        <tr><td>3.</td><td>Bank:</td>
+          <td>
+            <div class="bankDetails">
+              <table>
+                <tr><td>Bank Name</td><td>: BDO</td></tr>
+                <tr><td>Account</td><td>: Ilaw atbp Trading</td></tr>
+                <tr><td>Account No</td><td>: 1234-5678-9012</td></tr>
+              </table>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="letter_head">
+      <p>Let's light up your projects together!</p>
+      <p>Sincerely,</p>
+    </div>
+
+    <div class="letter_body_top">
+      <table>
+        <tr><td><input type="text" placeholder="Name of User" value="Juan Dela Cruz"></td></tr>
+        <tr><td><input type="text" placeholder="Designation" value="Sales Engineer"></td></tr>
+      </table>
+    </div>
+  </div>
+</body>
+</html>
